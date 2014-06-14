@@ -7,12 +7,12 @@ module HogbomClean (deconvolve) where
 import qualified Data.Vector.Unboxed    as V
 import qualified Image                  as I
 
--- Find the absolute peak value in an image, returning both
--- the value and the position
+-- | Find the absolute peak value in an image, returning both
+-- | the value and the position
 --
--- This function essentially breaks encapsulation of the Image
--- (not that it is very well encapsulated to start with), but it
--- does this for a small efficiency and simplicity gain
+-- | This function essentially breaks encapsulation of the Image
+-- | (not that it is very well encapsulated to start with), but it
+-- | does this for a small efficiency and simplicity gain
 findPeak :: I.Image -> (Float, I.Pos)
 findPeak img = (maxVal, maxPos2d)
     where absVals = V.map abs $ I.toVector img
@@ -20,15 +20,15 @@ findPeak img = (maxVal, maxPos2d)
           maxVal = absVals V.! maxPos
           maxPos2d = I.fromIndex maxPos $ I.extent img
 
--- This function gets passed to map to process each pixel
-subPsfPixel ::  I.Image ->  -- PSF image
-                I.Shape ->  -- Residual image shape
-                Float ->    -- Gain
-                Int ->      -- diffx
-                Int ->      -- diffy
-                Int  ->     -- Index location of pixel
-                Float ->    -- Input pixel value
-                Float       -- Output pixel value
+-- | This function gets passed to map to process each pixel
+subPsfPixel ::  I.Image     -- PSF image
+             -> I.Shape     -- Residual image shape
+             -> Float       -- Gain
+             -> Int         -- diffx
+             -> Int         -- diffy
+             -> Int         -- Index location of pixel
+             -> Float       -- Input pixel value
+             -> Float       -- Output pixel value
 subPsfPixel psf resShape gain diffx diffy pos val | inBounds = newval
                                                   | otherwise = val
     where resPos = I.fromIndex pos resShape
@@ -40,13 +40,13 @@ subPsfPixel psf resShape gain diffx diffy pos val | inBounds = newval
           psfVal = I.getElem psf psfPos
           newval = val - ((abs val) * gain * psfVal)
 
--- Subtracts the PSF from the residual image
-subtractPSF :: I.Image ->       -- PSF image
-               I.Image ->       -- Residual image
-               I.Pos ->         -- Peak position
-               I.Pos ->         -- PSF peak position
-               Float ->         -- Gain
-               I.Image          -- Return value: new residual image
+-- | Subtracts the PSF from the residual image
+subtractPSF :: I.Image      -- PSF image
+            -> I.Image      -- Residual image
+            -> I.Pos        -- Peak position
+            -> I.Pos        -- PSF peak position
+            -> Float        -- Gain
+            -> I.Image      -- Return value: new residual image
 subtractPSF psf residual peakpos psfpeakpos gain = I.fromVector newvec resShape
     where resShape = I.extent residual
           rx = I.col peakpos
@@ -58,16 +58,16 @@ subtractPSF psf residual peakpos psfpeakpos gain = I.fromVector newvec resShape
           f = subPsfPixel psf resShape gain diffx diffy
           newvec = V.imap f $ I.toVector residual
 
--- The deconvolution minor cycle loop
-deconvolveLoop :: I.Image ->    -- Residual image
-                  I.Image ->    -- Model image
-                  I.Image ->    -- PSF image
-                  I.Pos ->      -- PSF peak position
-                  Int ->        -- iter (zero based)
-                  Int ->        -- niters
-                  Float ->      -- gain
-                  Float ->      -- Threshold
-                  IO (I.Image, I.Image)     -- return value: (model, residual)
+-- | The deconvolution minor cycle loop
+deconvolveLoop :: I.Image     -- Residual image
+              ->  I.Image     -- Model image
+              ->  I.Image     -- PSF image
+              ->  I.Pos       -- PSF peak position
+              ->  Int         -- iter (zero based)
+              ->  Int         -- niters
+              ->  Float       -- gain
+              ->  Float       -- Threshold
+              ->  IO (I.Image, I.Image)     -- Return value: (model, residual)
 deconvolveLoop residual model psf psfPeakPos iter niters gain threshold = do
     if (iter < niters)
         then do 
@@ -95,13 +95,13 @@ deconvolveLoop residual model psf psfPeakPos iter niters gain threshold = do
           
         else return (model, residual)
 
--- Deconvolution entry function
-deconvolve :: I.Image ->        -- Dirty image
-              I.Image ->        -- PSF image
-              Int ->            -- Maximum number of iterations
-              Float ->          -- Gain
-              Float ->          -- Threshold
-              IO (I.Image, I.Image)   -- Return value: (model, residual)
+-- | Deconvolution entry function
+deconvolve :: I.Image         -- ^ Dirty image
+           -> I.Image         -- ^ PSF image
+           -> Int             -- ^ Maximum number of iterations
+           -> Float           -- ^ Gain
+           -> Float           -- ^ Threshold
+           -> IO (I.Image, I.Image) -- ^ Return value: (model, residual)
 deconvolve dirty psf niters gain threshold = do
     -- Initialise model and residual images
     let residual = dirty

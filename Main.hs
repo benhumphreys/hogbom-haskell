@@ -6,13 +6,14 @@ import qualified Data.Time.Clock.POSIX  as PT
 import qualified Image                  as I
 import qualified HogbomClean            as C
 
--- Given a shape returns a string representation
+-- | Given a shape returns a string representation
 shapeToString :: I.Shape -> String
 shapeToString sh = (show ncol) ++ "x" ++ (show nrow)
     where ncol = I.ncol sh
           nrow = I.nrow sh
 
 -- Main
+main :: IO ()
 main = do
     -- Read images and calculate dimensions
     putStrLn "Reading dirty image and psf image"
@@ -29,7 +30,7 @@ main = do
     start <- PT.getPOSIXTime
     (model, residual) <- C.deconvolve dirty psf niters gain threshold
     stop <- PT.getPOSIXTime
-    let time = realToFrac $ stop - start
+    let time = realToFrac $ (stop - start) :: Double
     putStrLn $ "    Time " ++ (show time) ++ " (s)"
     putStrLn $ "    Time per cycle " ++ (show $ time / (fromIntegral niters) * 1000.0) ++ " (ms)"
     putStrLn $ "    Cleaning rate  " ++ (show $ (fromIntegral niters) / time)
