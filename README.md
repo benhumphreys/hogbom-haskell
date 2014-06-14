@@ -19,6 +19,7 @@ working directory.  These can be downloaded from here:
 * http://www.atnf.csiro.au/people/Ben.Humphreys/psf.img
 
 The benchmark is built with Cabal. To checkout, build and execute:
+
     git clone git@github.com:benhumphreys/hogbom-haskell.git
     cd hogbom-haskell
     wget http://www.atnf.csiro.au/people/Ben.Humphreys/dirty.img
