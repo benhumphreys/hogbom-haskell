@@ -1,0 +1,10 @@
+# Haskell specific
+dist
+*.o
+*.hi
+.cabal-sandbox/
+cabal.sandbox.config
+cabal.config
+
+# Image files
+*.img
