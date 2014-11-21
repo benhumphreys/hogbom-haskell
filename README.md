@@ -24,6 +24,8 @@ The benchmark is built with Cabal. To checkout, build and execute:
     cd hogbom-haskell
     wget http://www.atnf.csiro.au/people/Ben.Humphreys/dirty.img
     wget http://www.atnf.csiro.au/people/Ben.Humphreys/psf.img
+    cabal sandbox init
+    cabal install --only-dependencies
     cabal configure
     cabal build
     dist/build/Main/Main
