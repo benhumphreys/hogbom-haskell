@@ -1,7 +1,7 @@
 Haskell Hogbom Clean Benchmark
 ==============================
 
-The Haskell Hogbom Clean Benchmark benchmark implements the kernel of the
+The Haskell Hogbom Clean Benchmark implements the kernel of the
 [Hogbom Clean](http://cdsads.u-strasbg.fr/abs/1974A%26AS...15..417H)
 deconvolution algorithm. This simple benchmark was initially written to
 benchmark the Intel Xeon Phi accelerator. This particular instance of the
